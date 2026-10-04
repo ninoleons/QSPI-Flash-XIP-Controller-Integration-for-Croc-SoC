@@ -1,0 +1,39 @@
+#! /bin/csh -f
+
+# v1.0 Zerun Thu 29 Feb 16:16:23 CET 2024
+# - klayout batch mode generate sealring
+source ../.setPDK.csh
+### set your gds and topcell ###
+set gds_path = chip.gds
+set topcell  = chip
+set newtopcell = ${topcell}_sealring
+### set the sealring size
+# to determine the sealring size:
+# measure the pad's "passive" to sealring's "active" > 7.5 
+# "SG13_S_G2_layout_rules.pdf, P50" Pad.d min Passiv edge to edge seal Activ is 7.5
+set width  = 2000
+set height = 2000
+################################
+
+#usage: 
+#klayout -n sg13cmos5l -zz -r sealring.py \
+#        -rd width=1300.0 -rd height=1300.0 -rd output=macros/sealring.gds.gz
+
+echo "###"
+echo "generate sealring..."
+oseda -2026.04 klayout -n $technology -zz -r $IHP_TECH/klayout/tech/scripts/sealring.py \
+     -rd width=$width -rd height=$height -rd output=output/sealring_${width}x${height}.gds
+echo "output: output/sealring_${width}x${height}.gds"
+
+echo "###"
+echo "merge sealring with $gds_path ..."
+set name = $gds_path:r
+set output = ${name}_sealring.gds
+
+oseda -2026.04 klayout -zz -rm /usr/pack/ihp-sg13-kgf/dz/klayout/merge_sealring.py \
+      -rd chip_gds=$gds_path -rd seal_gds=output/sealring_${width}x${height}.gds \
+      -rd dx_um=42 -rd dy_um=42 -rd new_top_name=$newtopcell \
+      -rd out_gds=$output
+echo "output: ${name}_sealring.gds"
+
+

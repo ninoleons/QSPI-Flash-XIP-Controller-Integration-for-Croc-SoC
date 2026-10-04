@@ -1,0 +1,19 @@
+#! /bin/csh -f
+
+# v1.0 Zerun Thu 29 Feb 16:16:23 CET 2024
+# - klayout batch mode generate bondpad
+source ../.setPDK.csh
+### set the size
+set diameter  = 70
+################################
+
+#usage: 
+#klayout -n sg13cmos5l -zz -r bondpad.py \
+#        -rd diameter=70.0 -rd shape=square -rd output=macros/bondpad_70x70.gds.gz
+
+echo "###"
+echo "generate bondpad..."
+oseda -2026.04 klayout -n $technology -zz -r $IHP_TECH/klayout/tech/scripts/bondpad.py \
+     -rd diameter=$diameter -rd output=output/bondpad_${diameter}x${diameter}.gds
+
+echo "output: output/bondpad_${diameter}x${diameter}.gds"

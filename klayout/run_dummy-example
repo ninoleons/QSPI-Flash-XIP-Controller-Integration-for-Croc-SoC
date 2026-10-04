@@ -1,0 +1,29 @@
+#! /bin/csh -f
+
+# v1.0 Zerun Thu 29 Feb 16:16:23 CET 2024
+# - klayout batch mode running drc
+source ../.setPDK.csh
+### set your gds 
+set gds_path = chip_w_sealring.gds
+
+################################
+#
+#usage:
+#klayout -n sg13cmos5l -zz -r filler.py \
+#        -rd output_file=filled-design.gds.gz \
+#        -rd no_activ \
+#        -rd no_metal \
+#        input-file.gds.gz
+#
+#* no_activ - Disable Activ and GatPoly fill
+#* no_metal - Disable Metal1 to TopMetal1  fill
+
+
+set name = $gds_path:r
+set output = ${name}_merged_fill.gds
+
+time oseda -2026.04 klayout -n $technology -zz -r $IHP_TECH/klayout/tech/scripts/filler.py \
+        -rd output_file=$output \
+        $gds_path
+
+echo "output: $output"

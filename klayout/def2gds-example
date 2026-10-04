@@ -1,0 +1,32 @@
+#! /bin/csh -f
+
+# klayout batch mode for transferring def to gds
+#
+# v1 Zerun Tue 27 Feb 13:49:08 CET 2024
+# - initial version
+# v1.1 Zerun Fri 29 May 11:40:58 CEST 2026
+# - add allow empty for some sram empty modules
+source ../.setPDK.csh
+
+### modify variables ###
+set defpath = ../openroad/out/${topcell}.def
+set topcell = chip
+#########################
+
+oseda -2026.04 klayout -zz -rd design_name=$topcell \
+            -rd in_def=$defpath \
+            -rd in_files=" ../technology/gds/sg13cmos5l_stdcell.gds \
+  ../technology/gds/ez130_8t.gds \
+  ../technology/gds/sg13cmos5l_io.gds \
+  ../technology/gds/bondpad5l_70x70.gds \
+  ../technology/gds/RM_IHPSG13_1P_512x32_c2_bm_bist.gds \
+" \
+            -rd out_file=${topcell}.gds\
+            -rd tech_file=.klayout/tech/${technology}.lyt \
+            -rd layer_map='' \
+            -rd seal_file='' \
+            -rd config_file='' \
+            -rd allow_empty='RM_IHPSG13_(1P|2P)_BITKIT_16x2_(CORNER|EDGE_TB|LE_con_corner|LE_con_edge_lr|LE_con_tap_lr|POWER_ramtap|TAP|TAP_LR)$' \
+            -rm .klayout/def2stream.py
+
+
